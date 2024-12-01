@@ -44,6 +44,11 @@ inputs:
     required: false
     default: "true"
 
+  debug:
+    description: "Debug options, do not enable unless for testing purposes"
+    required: false
+    default: "false"
+
 runs:
   using: "composite"
   steps:
@@ -110,6 +115,11 @@ runs:
           echo "$ dh -a"
           echo ""
           df -a
+          echo ""
+          if [[ ${{ inputs.debug }} == 'true' ]]; then
+            # this is slow, this is why it is not enabled by default
+            sudo du -h /* 2>/dev/null | sort -hr | head -n 50 || true
+          fi
           printSeparationLine '=' 80
         }
 
@@ -127,12 +137,11 @@ runs:
         printDH "BEFORE CLEAN-UP:"
         echo ""
 
-
         # Option: Remove Android library
 
         if [[ ${{ inputs.android }} == 'true' ]]; then
           BEFORE=$(getAvailableSpace)
-          
+
           sudo rm -rf /usr/local/lib/android || true
 
           AFTER=$(getAvailableSpace)
@@ -147,7 +156,7 @@ runs:
 
           # https://github.community/t/bigger-github-hosted-runners-disk-space/17267/11
           sudo rm -rf /usr/share/dotnet || true
-          
+
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED ".NET runtime"
@@ -160,7 +169,7 @@ runs:
 
           sudo rm -rf /opt/ghc || true
           sudo rm -rf /usr/local/.ghcup || true
-          
+
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Haskell runtime"
@@ -171,7 +180,7 @@ runs:
 
         if [[ ${{ inputs.large-packages }} == 'true' ]]; then
           BEFORE=$(getAvailableSpace)
-          
+
           sudo apt-get remove -y '^aspnetcore-.*' || echo "::warning::The command [sudo apt-get remove -y '^aspnetcore-.*'] failed to complete successfully. Proceeding..."
           sudo apt-get remove -y '^dotnet-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^dotnet-.*' --fix-missing] failed to complete successfully. Proceeding..."
           sudo apt-get remove -y '^llvm-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^llvm-.*' --fix-missing] failed to complete successfully. Proceeding..."
@@ -208,7 +217,7 @@ runs:
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
-          
+
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Tool cache"
@@ -222,7 +231,7 @@ runs:
           sudo swapoff -a || true
           sudo rm -f /mnt/swapfile || true
           free -h
-          
+
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Swap storage"
