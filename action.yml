@@ -131,10 +131,6 @@ runs:
           echo "${caption}"
           echo ''
 
-          echo '$ dh -h /'
-          df -h /
-          echo ''
-
           echo '$ dh -ha'
           df -ha
           echo ''
