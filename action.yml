@@ -15,8 +15,20 @@ inputs:
     description: "Remove .NET runtime"
     required: false
     default: "true"
+  jvm:
+    description: "Remove JVM runtime"
+    required: false
+    default: "true"
   haskell:
     description: "Remove Haskell runtime"
+    required: false
+    default: "true"
+  miniconda:
+    description: "Remove Miniconda runtime"
+    required: false
+    default: "true"
+  rust:
+    description: "Remove Rust runtime"
     required: false
     default: "true"
   usrlocal:
@@ -168,6 +180,35 @@ runs:
         )&
         fi
 
+        if [[ ${{ inputs.jvm }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/lib/jvm || true
+          sudo rm -rf /usr/share/gradle* || true
+          sudo rm -rf /usr/share/sbt || true
+          sudo rm -rf /usr/local/lib/lein || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "JVM runtime"
+        )&
+        fi
+
+        # Option: Remove Haskell runtime
+
+        if [[ ${{ inputs.miniconda }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/share/miniconda || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Miniconda runtime"
+        )&
+        fi
+
         # Option: Remove Haskell runtime
 
         if [[ ${{ inputs.haskell }} == 'true' ]]; then
@@ -194,6 +235,24 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Swift runtime"
+        )&
+        fi
+
+        # Option: Remove Rust runtime
+
+        if [[ ${{ inputs.rust }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /home/runner/.cargo || true
+          sudo rm -rf /home/runner/.rustup || true
+          sudo rm -rf /home/runneradmin/.cargo || true
+          sudo rm -rf /home/runneradmin/.rustup || true
+          sudo rm -rf /etc/skel/.rustup || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Rust runtime"
         )&
         fi
 
