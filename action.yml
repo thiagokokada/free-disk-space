@@ -11,6 +11,10 @@ inputs:
     description: "Remove Android runtime"
     required: false
     default: "true"
+  docker-images:
+    description: "Remove Docker images"
+    required: false
+    default: "true"
   dotnet:
     description: "Remove .NET runtime"
     required: false
@@ -31,43 +35,38 @@ inputs:
     description: "Remove Rust runtime"
     required: false
     default: "true"
-  usrlocal:
-    description: "Remove /usr/local"
-    required: false
-    default: "true"
-  opt:
-    description: "Remove /opt"
-    required: false
-    default: "true"
   swift:
     description: "Remove Swift runtime"
     required: false
     default: "true"
-
-  # option inspired by:
-  # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
-  large-packages:
-    description: "Remove large packages"
-    required: false
-    default: "true"
-
-  docker-images:
-    description: "Remove Docker images"
-    required: false
-    default: "true"
-
   # option inspired by:
   # https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
   tool-cache:
     description: "Remove image tool cache"
     required: false
-    default: "false"
+    default: "true"
 
+  # Disabled by default options
+
+  # option inspired by:
+  # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
+  # it is slow, this is why it is disabled by default
+  large-packages:
+    description: "Remove large packages"
+    required: false
+    default: "false"
+  usrlocal:
+    description: "Remove /usr/local"
+    required: false
+    default: "false"
+  opt:
+    description: "Remove /opt"
+    required: false
+    default: "false"
   swap-storage:
     description: "Remove swap storage"
     required: false
-    default: "true"
-
+    default: "false"
   debug:
     description: "Debug options, do not enable unless for testing purposes"
     required: false

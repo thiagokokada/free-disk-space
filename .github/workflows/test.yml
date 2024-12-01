@@ -9,5 +9,8 @@ jobs:
       - name: Free Disk Space
         uses: thiagokokada/free-disk-space@main
         with:
-          tool-cache: true
+          large-packages: true
+          usrlocal: true
+          opt: true
+          swap-storage: true
           debug: true
