@@ -19,6 +19,14 @@ inputs:
     description: "Remove Haskell runtime"
     required: false
     default: "true"
+  usrlocal:
+    description: "Remove /usr/local"
+    required: false
+    default: "true"
+  opt:
+    description: "Remove /opt"
+    required: false
+    default: "true"
   swift:
     description: "Remove Swift runtime"
     required: false
@@ -35,11 +43,6 @@ inputs:
     description: "Remove Docker images"
     required: false
     default: "true"
-
-  codeql:
-    description: "Remove CodeQL"
-    required: false
-    default: "false"
 
   # option inspired by:
   # https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
@@ -150,34 +153,6 @@ runs:
         printDH "BEFORE CLEAN-UP:"
         echo ""
 
-        # Option: Remove Android library
-
-        if [[ ${{ inputs.android }} == 'true' ]]; then
-        (
-          BEFORE=$(getAvailableSpace)
-
-          sudo rm -rf /usr/local/lib/android || true
-
-          AFTER=$(getAvailableSpace)
-          SAVED=$((AFTER-BEFORE))
-          printSavedSpace $SAVED "Android library"
-        )&
-        fi
-
-        # Option: Remove CodeQL
-
-        if [[ ${{ inputs.codeql }} == 'true' ]]; then
-        (
-          BEFORE=$(getAvailableSpace)
-
-          sudo rm -rf /opt/hostedtoolcache || true
-
-          AFTER=$(getAvailableSpace)
-          SAVED=$((AFTER-BEFORE))
-          printSavedSpace $SAVED "CodeQL"
-        )&
-        fi
-
         # Option: Remove .NET runtime
 
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
@@ -210,7 +185,7 @@ runs:
 
         # Option: Remove Swift runtime
 
-        if [[ ${{ inputs.swift }} == 'true' ]]; then
+        if [[ ${{ inputs.opt }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
 
@@ -219,6 +194,34 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Swift runtime"
+        )&
+        fi
+
+        # Option: Remove /usr/local
+
+        if [[ ${{ inputs.usrlocal }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "/usr/local"
+        )&
+        fi
+
+        # Option: Remove /opt
+
+        if [[ ${{ inputs.opt }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /opt || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "/opt"
         )&
         fi
 
