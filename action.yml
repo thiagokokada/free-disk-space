@@ -11,6 +11,10 @@ inputs:
     description: "Remove Android runtime"
     required: false
     default: "true"
+  gcc:
+    description: "Remove GCC"
+    required: false
+    default: "true"
   docker-images:
     description: "Remove Docker images"
     required: false
@@ -160,6 +164,32 @@ runs:
         printDH "BEFORE CLEAN-UP:"
         echo ""
 
+        # Option: Remove Android library
+
+        if [[ ${{ inputs.android }} == 'true' ]]; then
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local/lib/android || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Android library"
+        fi
+
+        # Option: Remove GCC
+
+        if [[ ${{ inputs.gcc }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/lib/gcc || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "GCC"
+        )&
+        fi
+
         # Option: Remove .NET runtime
 
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
@@ -181,6 +211,7 @@ runs:
 
           sudo rm -rf /usr/lib/jvm || true
           sudo rm -rf /usr/share/gradle* || true
+          sudo rm -rf /root/.sbt || true
           sudo rm -rf /usr/share/sbt || true
           sudo rm -rf /usr/local/lib/lein || true
 
