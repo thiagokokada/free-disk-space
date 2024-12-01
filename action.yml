@@ -11,10 +11,6 @@ inputs:
     description: "Remove Android runtime"
     required: false
     default: "true"
-  codeql:
-    description: "Remove CodeQL"
-    required: false
-    default: "true"
   dotnet:
     description: "Remove .NET runtime"
     required: false
@@ -39,6 +35,11 @@ inputs:
     description: "Remove Docker images"
     required: false
     default: "true"
+
+  codeql:
+    description: "Remove CodeQL"
+    required: false
+    default: "false"
 
   # option inspired by:
   # https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
