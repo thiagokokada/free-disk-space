@@ -11,6 +11,10 @@ inputs:
     description: "Remove Android runtime"
     required: false
     default: "true"
+  codeql:
+    description: "Remove CodeQL"
+    required: false
+    default: "true"
   dotnet:
     description: "Remove .NET runtime"
     required: false
@@ -147,6 +151,18 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Android library"
+        fi
+
+        # Option: Remove CodeQL
+
+        if [[ ${{ inputs.codeql }} == 'true' ]]; then
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /opt/hostedtoolcache || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "CodeQL"
         fi
 
         # Option: Remove .NET runtime
