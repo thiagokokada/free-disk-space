@@ -120,12 +120,8 @@ runs:
           df -h /
           echo ''
 
-          echo '$ dh -a /'
-          df -a /
-          echo ''
-
-          echo '$ dh -a'
-          df -a
+          echo '$ dh -ha'
+          df -ha
           echo ''
 
           # this is slow, this is why it is not enabled by default
