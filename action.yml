@@ -159,7 +159,6 @@ runs:
         # Display initial disk space stats
 
         AVAILABLE_INITIAL=$(getAvailableSpace)
-        AVAILABLE_ROOT_INITIAL=$(getAvailableSpace '/')
 
         printDH "BEFORE CLEAN-UP:"
         echo ""
@@ -385,15 +384,9 @@ runs:
         # Output saved space statistic
 
         AVAILABLE_END=$(getAvailableSpace)
-        AVAILABLE_ROOT_END=$(getAvailableSpace '/')
 
         echo ""
         printDH "AFTER CLEAN-UP:"
-
-        echo ""
         echo ""
 
-        echo "/dev/root:"
-        printSavedSpace $((AVAILABLE_ROOT_END - AVAILABLE_ROOT_INITIAL))
-        echo "overall:"
         printSavedSpace $((AVAILABLE_END - AVAILABLE_INITIAL))
