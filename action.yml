@@ -113,20 +113,28 @@ runs:
 
           printSeparationLine '=' 80
           echo "${caption}"
-          echo ""
-          echo "$ dh -h /"
-          echo ""
+          echo ''
+
+          echo '$ dh -h /'
           df -h /
-          echo "$ dh -a /"
-          echo ""
+          echo ''
+
+          echo '$ dh -a /'
           df -a /
-          echo "$ dh -a"
-          echo ""
+          echo ''
+
+          echo '$ dh -a'
           df -a
-          echo ""
+          echo ''
+
+          # this is slow, this is why it is not enabled by default
           if [[ ${{ inputs.debug }} == 'true' ]]; then
-            # this is slow, this is why it is not enabled by default
-            sudo du -h /* 2>/dev/null | sort -hr | head -n 50 || true
+            echo '$ du -h /* 2>/dev/null | sort -hr | head -n 50'
+            # https://unix.stackexchange.com/a/355164
+            sudo perl -e \
+              '$SIG{PIPE}="DEFAULT"; exec "@ARGV"' \
+              'du -h /* 2>/dev/null | sort -hr | head -n 50' || true
+            echo ''
           fi
           printSeparationLine '=' 80
         }
