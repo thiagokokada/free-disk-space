@@ -157,6 +157,7 @@ runs:
         # Option: Remove Android library
 
         if [[ ${{ inputs.android }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf /usr/local/lib/android || true
@@ -164,11 +165,13 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Android library"
+        )&
         fi
 
         # Option: Remove CodeQL
 
         if [[ ${{ inputs.codeql }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf /opt/hostedtoolcache || true
@@ -176,11 +179,13 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "CodeQL"
+        )&
         fi
 
         # Option: Remove .NET runtime
 
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           # https://github.community/t/bigger-github-hosted-runners-disk-space/17267/11
@@ -189,11 +194,13 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED ".NET runtime"
+        )&
         fi
 
         # Option: Remove Haskell runtime
 
         if [[ ${{ inputs.haskell }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf /opt/ghc || true
@@ -202,11 +209,13 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Haskell runtime"
+        )&
         fi
 
         # Option: Remove Swift runtime
 
         if [[ ${{ inputs.swift }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf /usr/share/swift || true
@@ -214,47 +223,53 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Swift runtime"
+        )&
         fi
 
         # Option: Remove large packages
         # REF: https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
 
         if [[ ${{ inputs.large-packages }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
-          sudo apt-get remove -y '^aspnetcore-.*' || echo "::warning::The command [sudo apt-get remove -y '^aspnetcore-.*'] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y '^dotnet-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^dotnet-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y '^llvm-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^llvm-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y 'php.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y 'php.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y '^mongodb-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^mongodb-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y '^mysql-.*' --fix-missing || echo "::warning::The command [sudo apt-get remove -y '^mysql-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing || echo "::warning::The command [sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y google-cloud-sdk --fix-missing || echo "::debug::The command [sudo apt-get remove -y google-cloud-sdk --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y google-cloud-cli --fix-missing || echo "::debug::The command [sudo apt-get remove -y google-cloud-cli --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get autoremove -y || echo "::warning::The command [sudo apt-get autoremove -y] failed to complete successfully. Proceeding..."
-          sudo apt-get clean || echo "::warning::The command [sudo apt-get clean] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y '^aspnetcore-.*' &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^aspnetcore-.*'] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y '^dotnet-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^dotnet-.*' --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y '^llvm-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^llvm-.*' --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y 'php.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y 'php.*' --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y '^mongodb-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^mongodb-.*' --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y '^mysql-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^mysql-.*' --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y google-cloud-sdk --fix-missing &>/dev/null || echo "::debug::The command [sudo apt-get remove -y google-cloud-sdk --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge -y google-cloud-cli --fix-missing &>/dev/null || echo "::debug::The command [sudo apt-get remove -y google-cloud-cli --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get autoremove -y &>/dev/null || echo "::warning::The command [sudo apt-get autoremove -y] failed to complete successfully. Proceeding..."
+          sudo apt-get clean &>/dev/null || echo "::warning::The command [sudo apt-get clean] failed to complete successfully. Proceeding..."
 
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Large misc. packages"
+        )&
         fi
 
         # Option: Remove Docker images
 
         if [[ ${{ inputs.docker-images }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
-          sudo docker image prune --all --force || true
+          sudo docker image prune --all --force &>/dev/null || true
 
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Docker images"
+        )&
         fi
 
         # Option: Remove tool cache
         # REF: https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
 
         if [[ ${{ inputs.tool-cache }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
@@ -262,11 +277,13 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Tool cache"
+        )&
         fi
 
         # Option: Remove Swap storage
 
         if [[ ${{ inputs.swap-storage }} == 'true' ]]; then
+        (
           BEFORE=$(getAvailableSpace)
 
           sudo swapoff -a || true
@@ -276,9 +293,10 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Swap storage"
+        )&
         fi
 
-
+        wait $(jobs -rp)
 
         # Output saved space statistic
 
