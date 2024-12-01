@@ -23,6 +23,10 @@ inputs:
     description: "Remove Haskell runtime"
     required: false
     default: "true"
+  swift:
+    description: "Remove Swift runtime"
+    required: false
+    default: "true"
 
   # option inspired by:
   # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
@@ -189,6 +193,18 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Haskell runtime"
+        fi
+
+        # Option: Remove Swift runtime
+
+        if [[ ${{ inputs.swift }} == 'true' ]]; then
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/share/swift || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Swift runtime"
         fi
 
         # Option: Remove large packages
