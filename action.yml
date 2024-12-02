@@ -15,6 +15,10 @@ inputs:
     description: "Remove GCC"
     required: false
     default: "true"
+  google-cloud-sdk:
+    description: "Remove Google Cloud SDK"
+    required: false
+    default: "true"
   docker-images:
     description: "Remove Docker images"
     required: false
@@ -31,8 +35,16 @@ inputs:
     description: "Remove Haskell runtime"
     required: false
     default: "true"
+  llvm:
+    description: "Remove LLVM"
+    required: false
+    default: "true"
   miniconda:
     description: "Remove Miniconda runtime"
+    required: false
+    default: "true"
+  mono:
+    description: "Remove Mono runtime"
     required: false
     default: "true"
   rust:
@@ -52,13 +64,6 @@ inputs:
 
   # Disabled by default options
 
-  # option inspired by:
-  # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
-  # it is slow, this is why it is disabled by default
-  large-packages:
-    description: "Remove large packages"
-    required: false
-    default: "false"
   usrlocal:
     description: "Remove /usr/local"
     required: false
@@ -163,7 +168,7 @@ runs:
         printDH "BEFORE CLEAN-UP:"
         echo ""
 
-        # Option: Remove Android library
+        # Clean-up
 
         if [[ ${{ inputs.android }} == 'true' ]]; then
           BEFORE=$(getAvailableSpace)
@@ -174,8 +179,6 @@ runs:
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Android library"
         fi
-
-        # Option: Remove GCC
 
         if [[ ${{ inputs.gcc }} == 'true' ]]; then
         (
@@ -189,7 +192,17 @@ runs:
         )&
         fi
 
-        # Option: Remove .NET runtime
+        if [[ ${{ inputs.google-cloud-sdk }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/lib/google-cloud-sdk || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "GCC"
+        )&
+        fi
 
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
         (
@@ -220,8 +233,6 @@ runs:
         )&
         fi
 
-        # Option: Remove Haskell runtime
-
         if [[ ${{ inputs.miniconda }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -234,7 +245,17 @@ runs:
         )&
         fi
 
-        # Option: Remove Haskell runtime
+        if [[ ${{ inputs.mono }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/lib/mono || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Mono runtime"
+        )&
+        fi
 
         if [[ ${{ inputs.haskell }} == 'true' ]]; then
         (
@@ -249,9 +270,19 @@ runs:
         )&
         fi
 
-        # Option: Remove Swift runtime
+        if [[ ${{ inputs.llvm }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
 
-        if [[ ${{ inputs.opt }} == 'true' ]]; then
+          sudo rm -rf /usr/lib/llvm* || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Haskell runtime"
+        )&
+        fi
+
+        if [[ ${{ inputs.swift }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
 
@@ -262,8 +293,6 @@ runs:
           printSavedSpace $SAVED "Swift runtime"
         )&
         fi
-
-        # Option: Remove Rust runtime
 
         if [[ ${{ inputs.rust }} == 'true' ]]; then
         (
@@ -281,8 +310,6 @@ runs:
         )&
         fi
 
-        # Option: Remove /usr/local
-
         if [[ ${{ inputs.usrlocal }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -294,8 +321,6 @@ runs:
           printSavedSpace $SAVED "/usr/local"
         )&
         fi
-
-        # Option: Remove /opt
 
         if [[ ${{ inputs.opt }} == 'true' ]]; then
         (
@@ -309,33 +334,6 @@ runs:
         )&
         fi
 
-        # Option: Remove large packages
-        # REF: https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
-
-        if [[ ${{ inputs.large-packages }} == 'true' ]]; then
-        (
-          BEFORE=$(getAvailableSpace)
-
-          sudo apt-get purge -y '^aspnetcore-.*' &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^aspnetcore-.*'] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y '^dotnet-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^dotnet-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y '^llvm-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^llvm-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y 'php.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y 'php.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y '^mongodb-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^mongodb-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y '^mysql-.*' --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y '^mysql-.*' --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing &>/dev/null || echo "::warning::The command [sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y google-cloud-sdk --fix-missing &>/dev/null || echo "::debug::The command [sudo apt-get remove -y google-cloud-sdk --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get purge -y google-cloud-cli --fix-missing &>/dev/null || echo "::debug::The command [sudo apt-get remove -y google-cloud-cli --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get autoremove -y &>/dev/null || echo "::warning::The command [sudo apt-get autoremove -y] failed to complete successfully. Proceeding..."
-          sudo apt-get clean &>/dev/null || echo "::warning::The command [sudo apt-get clean] failed to complete successfully. Proceeding..."
-
-          AFTER=$(getAvailableSpace)
-          SAVED=$((AFTER-BEFORE))
-          printSavedSpace $SAVED "Large misc. packages"
-        )&
-        fi
-
-        # Option: Remove Docker images
-
         if [[ ${{ inputs.docker-images }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -348,9 +346,6 @@ runs:
         )&
         fi
 
-        # Option: Remove tool cache
-        # REF: https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
-
         if [[ ${{ inputs.tool-cache }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -362,8 +357,6 @@ runs:
           printSavedSpace $SAVED "Tool cache"
         )&
         fi
-
-        # Option: Remove Swap storage
 
         if [[ ${{ inputs.swap-storage }} == 'true' ]]; then
         (
@@ -379,6 +372,7 @@ runs:
         )&
         fi
 
+        # Wait until all background jobs finishes
         wait $(jobs -rp)
 
         # Output saved space statistic
