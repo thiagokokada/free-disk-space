@@ -83,6 +83,10 @@ inputs:
     description: "Remove Rust runtime"
     required: false
     default: "true"
+  share:
+    description: "Remove /usr/share/{man,doc,icons}"
+    required: false
+    default: "true"
   snap:
     description: "Remove Snap"
     required: false
@@ -256,6 +260,7 @@ runs:
         if [[ ${{ inputs.jvm }} == 'true' ]]; then
           remove "JVM runtime" \
             /usr/lib/jvm \
+            /usr/share/java \
             /usr/share/gradle* \
             /usr/share/sbt \
             /root/.sbt \
@@ -295,7 +300,15 @@ runs:
         fi
 
         if [[ ${{ inputs.llvm }} == 'true' ]]; then
-          remove "LLVM" /usr/lib/llvm* &
+          remove "LLVM" \
+            /usr/lib/llvm* \
+            /usr/lib/*-linux-gnu/libLLVM* \
+            /usr/lib/*-linux-gnu/libclang* \
+            /usr/lib/*-linux-gnu/liblldb* &
+        fi
+
+        if [[ ${{ inputs.snap }} == 'true' ]]; then
+          remove "/usr/share/{man,doc,icons}" /usr/share/{man,doc,icons} &
         fi
 
         if [[ ${{ inputs.snap }} == 'true' ]]; then
