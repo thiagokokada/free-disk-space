@@ -4,7 +4,7 @@ A customizable GitHub Actions to free disk space on Linux GitHub Actions
 runners.
 
 On a typical Ubuntu runner, with default options turned on, this can clear up
-to 44 GiB of disk space (or 50 GiB with all options enabled). It is also fast
+to ~45 GiB of disk space (or ~51 GiB with all options enabled). It is also fast
 (generally less than 1 minute with default options) since it runs deletion in
 parallel, and doesn't depend in `apt` to uninstall packages.
 
