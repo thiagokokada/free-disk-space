@@ -251,9 +251,11 @@ runs:
           remove "Browsers" \
             /opt/chrome \
             /opt/google/chrome \
+            /usr/local/share/chromedriver* \
             /usr/local/share/chromium \
             /opt/microsoft/{edge,msedge} \
             /opt/msedge \
+            /usr/local/share/edge_driver* \
             /usr/lib/firefox &
         fi
 
