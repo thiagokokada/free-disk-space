@@ -11,6 +11,14 @@ inputs:
     description: "Remove Android runtime"
     required: false
     default: "true"
+  aws-cli:
+    description: "Remove AWS CLI"
+    required: false
+    default: "true"
+  browsers:
+    description: "Remove Browsers (Chrome, Edge and Firefox)"
+    required: false
+    default: "true"
   gcc:
     description: "Remove GCC"
     required: false
@@ -31,6 +39,10 @@ inputs:
     description: "Remove JVM runtime"
     required: false
     default: "true"
+  julia:
+    description: "Remove Julia runtime"
+    required: false
+    default: "true"
   haskell:
     description: "Remove Haskell runtime"
     required: false
@@ -45,6 +57,18 @@ inputs:
     default: "true"
   mono:
     description: "Remove Mono runtime"
+    required: false
+    default: "true"
+  node:
+    description: "Remove Node runtime"
+    required: false
+    default: "true"
+  python:
+    description: "Remove Python runtime"
+    required: false
+    default: "true"
+  powershell:
+    description: "Remove Powershell runtime"
     required: false
     default: "true"
   rust:
@@ -184,6 +208,32 @@ runs:
           printSavedSpace $SAVED "Android library"
         fi
 
+        if [[ ${{ inputs.aws-cli }} == 'true' ]]; then
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local/aws-* || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Android library"
+        fi
+
+        if [[ ${{ inputs.browsers }} == 'true' ]]; then
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /opt/chrome || true
+          sudo rm -rf /opt/google/chrome || true
+          sudo rm -rf /usr/local/share/chromium || true
+          sudo rm -rf /opt/microsoft/edge || true
+          sudo rm -rf /opt/microsoft/msedge || true
+          sudo rm -rf /opt/msedge || true
+          sudo rm -rf /usr/lib/firefox || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Browsers"
+        fi
+
         if [[ ${{ inputs.gcc }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -237,6 +287,18 @@ runs:
         )&
         fi
 
+        if [[ ${{ inputs.julia }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local/julia* || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Julia runtime"
+        )&
+        fi
+
         if [[ ${{ inputs.miniconda }} == 'true' ]]; then
         (
           BEFORE=$(getAvailableSpace)
@@ -258,6 +320,44 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Mono runtime"
+        )&
+        fi
+
+        if [[ ${{ inputs.node }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local/n || true
+          sudo rm -rf /usr/local/lib/node_modules || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Node runtime"
+        )&
+        fi
+
+        if [[ ${{ inputs.python }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /opt/pipx || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Python runtime"
+        )&
+        fi
+
+        if [[ ${{ inputs.powershell }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo rm -rf /usr/local/share/powershell || true
+          sudo rm -rf /opt/microsoft/powershell || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Powershell runtime"
         )&
         fi
 
