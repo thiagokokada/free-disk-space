@@ -15,14 +15,28 @@ action with commit
 | runner                             | before | after | diff | swap |
 |------------------------------------|--------|-------|------|------|
 | ubuntu-22.04                       | 22G    | 67G   | 45G  | 4G   |
-| ubuntu-22.04 (including optionals) | 22G    | 69G   | 51G  | 0    |
+| ubuntu-22.04 (including optionals) | 22G    | 69G   | 47G  | 0    |
 | ubuntu-24.04                       | 29G    | 67G   | 38G  | 4G   |
 
 This action is also fast, generally taking less than 1 minute with default
 options, since it runs deletion in parallel and doesn't depend in `apt` to
 remove packages.
 
+Swap storage actually seems useless to remove in recent version of GitHub
+runners (maybe because they're not using swap file anymore?), but it still
+provided as an option for backwards compatibility.
+
 ## Example
+
+It is recommended to look at the [source
+code](https://github.com/thiagokokada/free-disk-space/blob/main/action.yml) for
+the action and look at all available inputs and see which ones may affect you.
+By default it will pretty much remove support for any of the pre-installed
+programming languages, but it will try to keep support for common Linux tools
+and `apt`, so you can still install more things if needed.
+I also recommend you to fork and adapt this accordingly to your needs. Again,
+this comes with **no support**. If you want to use this repository directly
+I recommend you to pin a specific commit.
 
 ```yaml
 name: Free Disk Space (Ubuntu)
@@ -45,8 +59,9 @@ jobs:
         usrlocal: true
         opt: true
         varcache: true
-        # frees up 4 GiB, but you may also run Out-of-Memory in bigger builds
-        # so it is disabled by default
+        # technically frees up to 4 GiB, but see note above about it being
+        # useless, and can also cause Out-of-Memory errors in bigger builds,
+        # so disabled by default
         swap-storage: true
         # this will run `du -h /* 2>/dev/null | sort -hr | head -n <N>` to show
         # the top N directories by size, it is mostly used by development/debug
