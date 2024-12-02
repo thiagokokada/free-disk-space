@@ -15,8 +15,20 @@ jobs:
       - name: Run this action
         uses: ./.github/actions/this
         with:
-          usrlocal: false
-          opt: false
+          debug: true
+  free-disk-space-incl-optionals:
+    runs-on: ubuntu-latest
+    steps:
+      # If there is a problem with this GitHub Actions, this step will fail
+      - name: Checkout this action
+        uses: actions/checkout@v4
+        with:
+          path: ./.github/actions/this
+      - name: Run this action
+        uses: ./.github/actions/this
+        with:
+          usrlocal: true
+          opt: true
           varcache: true
           swap-storage: true
           debug: true

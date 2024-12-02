@@ -294,6 +294,7 @@ runs:
         if [[ ${{ inputs.llvm }} == 'true' ]]; then
           remove "LLVM" \
             /usr/lib/llvm* \
+            /usr/include/llvm* \
             /usr/lib/*-linux-gnu/libLLVM* \
             /usr/lib/*-linux-gnu/libclang* \
             /usr/lib/*-linux-gnu/liblldb* &
@@ -308,7 +309,10 @@ runs:
         fi
 
         if [[ ${{ inputs.node }} == 'true' ]]; then
-          remove "Node runtime" /usr/local/n /usr/local/lib/node_modules &
+          remove "Node runtime" \
+            /usr/local/n \
+            /usr/local/lib/node_modules \
+            /usr/local/include/node &
         fi
 
         if [[ ${{ inputs.python }} == 'true' ]]; then
