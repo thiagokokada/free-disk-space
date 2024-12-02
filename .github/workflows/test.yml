@@ -15,7 +15,6 @@ jobs:
       - name: Run this action
         uses: ./.github/actions/this
         with:
-          large-packages: true
           usrlocal: true
           opt: true
           swap-storage: true
