@@ -17,5 +17,6 @@ jobs:
         with:
           usrlocal: false
           opt: false
+          varcache: true
           swap-storage: true
           debug: true

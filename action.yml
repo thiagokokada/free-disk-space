@@ -20,7 +20,7 @@ inputs:
     required: false
     default: "true"
   browsers:
-    description: "Remove Browsers (Chrome, Edge and Firefox)"
+    description: "Remove Browsers (Chrome, Chromium, Edge and Firefox)"
     required: false
     default: "true"
   gcc:
@@ -79,12 +79,16 @@ inputs:
     description: "Remove Powershell runtime"
     required: false
     default: "true"
+  ruby:
+    description: "Remove Ruby runtime"
+    required: false
+    default: "true"
   rust:
     description: "Remove Rust runtime"
     required: false
     default: "true"
-  share:
-    description: "Remove /usr/share/{man,doc,icons}"
+  sharemisc:
+    description: "Remove /usr/{,local}/share/{man,doc,icons}"
     required: false
     default: "true"
   snap:
@@ -110,6 +114,10 @@ inputs:
     default: "false"
   opt:
     description: "Remove /opt"
+    required: false
+    default: "false"
+  varcache:
+    description: "Remove /var/cache"
     required: false
     default: "false"
   swap-storage:
@@ -189,11 +197,11 @@ runs:
 
           # this is slow, this is why it is not enabled by default
           if [[ ${{ inputs.debug }} == 'true' ]]; then
-            echo '$ du -h /* 2>/dev/null | sort -hr | head -n 50'
+            echo '$ du -h /* 2>/dev/null | sort -hr | head -n 100'
             # https://unix.stackexchange.com/a/355164
             sudo perl -e \
               '$SIG{PIPE}="DEFAULT"; exec "@ARGV"' \
-              'du -h /* 2>/dev/null | sort -hr | head -n 50' || true
+              'du -h /* 2>/dev/null | sort -hr | head -n 100' || true
             echo ''
           fi
           printSeparationLine '=' 80
@@ -307,8 +315,10 @@ runs:
             /usr/lib/*-linux-gnu/liblldb* &
         fi
 
-        if [[ ${{ inputs.snap }} == 'true' ]]; then
-          remove "/usr/share/{man,doc,icons}" /usr/share/{man,doc,icons} &
+        if [[ ${{ inputs.sharemisc }} == 'true' ]]; then
+          remove "/usr/share/{man,doc,icons}" \
+            /usr/share/{man,doc,icons} \
+            /usr/local/share/{man,doc,icons} &
         fi
 
         if [[ ${{ inputs.snap }} == 'true' ]]; then
@@ -323,6 +333,10 @@ runs:
           remove "Swift runtime" /usr/share/swift &
         fi
 
+        if [[ ${{ inputs.ruby }} == 'true' ]]; then
+          remove "Rust runtime" /var/lib/gems/ /home/linuxbrew/.linuxbrew/ &
+        fi
+
         if [[ ${{ inputs.rust }} == 'true' ]]; then
           remove "Rust runtime" /home/{runner,runneradmin}/{.cargo,.rustup} /etc/skel/.rustup &
         fi
@@ -333,6 +347,10 @@ runs:
 
         if [[ ${{ inputs.opt }} == 'true' ]]; then
           remove "/opt" /opt &
+        fi
+
+        if [[ ${{ inputs.varcache }} == 'true' ]]; then
+          remove "/var/cache" /var/cache &
         fi
 
         if [[ ${{ inputs.tool-cache }} == 'true' ]]; then
