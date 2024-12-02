@@ -4,12 +4,14 @@ A customizable GitHub Actions to free disk space on Linux GitHub Actions
 runners.
 
 On a typical Ubuntu runner, with default options turned on, this can clear up
-to ~45 GiB of disk space (or ~51 GiB with all options enabled). It is also fast
+to about 45 GiB of disk space (or about 51 GiB with all options enabled) in
+`ubuntu-22.04` runner (or about 38GiB in `ubuntu-24.04`, but keep in mind that
+the free space is similar because the image itself is smaller). It is also fast
 (generally less than 1 minute with default options) since it runs deletion in
-parallel, and doesn't depend in `apt` to uninstall packages.
+parallel and doesn't depend in `apt` to remove packages.
 
-A fork of https://github.com/jlumbroso/free-disk-space, that comes with extra
-options and **no support**. The use case here is mostly to be used with
+A hard fork of https://github.com/jlumbroso/free-disk-space, that comes with
+extra options and **no support**. The use case here is mostly to be used with
 [Nix](https://nixos.org/) since Nix builders tends to be self-contained, but it
 may be useful in other contexts too.
 

@@ -260,7 +260,7 @@ runs:
         fi
 
         if [[ ${{ inputs.gcc }} == 'true' ]]; then
-          remove "GCC" /usr/lib/gcc &
+          remove "GCC" /usr/lib/gcc /usr/libexec/gcc &
         fi
 
         if [[ ${{ inputs.google-cloud-sdk }} == 'true' ]]; then
@@ -270,6 +270,7 @@ runs:
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
           remove ".NET runtime" \
             /usr/share/dotnet \
+            /usr/lib/dotnet \
             /home/{runner,runneradmin}/.dotnet \
             /etc/skel/.dotnet &
         fi
@@ -340,7 +341,11 @@ runs:
         fi
 
         if [[ ${{ inputs.ruby }} == 'true' ]]; then
-          remove "Ruby runtime" /var/lib/gems/ /home/linuxbrew/.linuxbrew/ /usr/share/ri &
+          remove "Ruby runtime" \
+            /usr/lib/ruby \
+            /var/lib/gems \
+            /home/linuxbrew/.linuxbrew \
+            /usr/share/ri &
         fi
 
         if [[ ${{ inputs.rust }} == 'true' ]]; then
