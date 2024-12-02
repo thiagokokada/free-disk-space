@@ -15,7 +15,7 @@ jobs:
       - name: Run this action
         uses: ./.github/actions/this
         with:
-          usrlocal: true
-          opt: true
+          usrlocal: false
+          opt: false
           swap-storage: true
           debug: true

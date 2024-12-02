@@ -51,6 +51,10 @@ inputs:
     description: "Remove Rust runtime"
     required: false
     default: "true"
+  snap:
+    description: "Remove Snap"
+    required: false
+    default: "true"
   swift:
     description: "Remove Swift runtime"
     required: false
@@ -279,6 +283,20 @@ runs:
           AFTER=$(getAvailableSpace)
           SAVED=$((AFTER-BEFORE))
           printSavedSpace $SAVED "Haskell runtime"
+        )&
+        fi
+
+        if [[ ${{ inputs.snap }} == 'true' ]]; then
+        (
+          BEFORE=$(getAvailableSpace)
+
+          sudo systemctl stop snapd.service &>/dev/null || true
+          sudo umount --recursive /snap/*/* &>/dev/null || true
+          sudo rm -rf  ~/snap /snap /var/snap /var/lib/snapd /usr/lib/snapd || true
+
+          AFTER=$(getAvailableSpace)
+          SAVED=$((AFTER-BEFORE))
+          printSavedSpace $SAVED "Snap runtime"
         )&
         fi
 
