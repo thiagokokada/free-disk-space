@@ -87,10 +87,6 @@ inputs:
     description: "Remove Rust runtime"
     required: false
     default: "true"
-  sharemisc:
-    description: "Remove /usr/{,local}/share/{man,doc,icons}"
-    required: false
-    default: "true"
   snap:
     description: "Remove Snap"
     required: false
@@ -103,6 +99,10 @@ inputs:
   # https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
   tool-cache:
     description: "Remove image tool cache"
+    required: false
+    default: "true"
+  usrmisc:
+    description: "Remove /usr/{,local}/share/{man,doc,icons}"
     required: false
     default: "true"
 
@@ -262,21 +262,41 @@ runs:
         fi
 
         if [[ ${{ inputs.dotnet }} == 'true' ]]; then
-          remove ".NET runtime" /usr/share/dotnet &
+          remove ".NET runtime" \
+            /usr/share/dotnet \
+            /home/{runner,runneradmin}/.dotnet \
+            /etc/skel/.dotnet &
         fi
 
         if [[ ${{ inputs.jvm }} == 'true' ]]; then
           remove "JVM runtime" \
             /usr/lib/jvm \
-            /usr/share/java \
             /usr/share/gradle* \
-            /usr/share/sbt \
+            /usr/share/java* \
+            /usr/share/kotlin* \
+            /usr/share/sbt* \
             /root/.sbt \
             /usr/local/lib/lein &
         fi
 
         if [[ ${{ inputs.julia }} == 'true' ]]; then
           remove "Julia runtime" /usr/local/julia* &
+        fi
+
+        if [[ ${{ inputs.haskell }} == 'true' ]]; then
+          remove "Haskell runtime" /opt/ghc /usr/local/.ghcup &
+        fi
+
+        if [[ ${{ inputs.heroku }} == 'true' ]]; then
+          remove "Heroku" /usr/lib/heroku &
+        fi
+
+        if [[ ${{ inputs.llvm }} == 'true' ]]; then
+          remove "LLVM" \
+            /usr/lib/llvm* \
+            /usr/lib/*-linux-gnu/libLLVM* \
+            /usr/lib/*-linux-gnu/libclang* \
+            /usr/lib/*-linux-gnu/liblldb* &
         fi
 
         if [[ ${{ inputs.miniconda }} == 'true' ]]; then
@@ -299,26 +319,14 @@ runs:
           remove "Powershell runtime" /usr/local/share/powershell /opt/microsoft/powershell &
         fi
 
-        if [[ ${{ inputs.haskell }} == 'true' ]]; then
-          remove "Haskell runtime" /opt/ghc /usr/local/.ghcup &
+        if [[ ${{ inputs.ruby }} == 'true' ]]; then
+          remove "Rust runtime" /var/lib/gems/ /home/linuxbrew/.linuxbrew/ /usr/share/ri &
         fi
 
-        if [[ ${{ inputs.heroku }} == 'true' ]]; then
-          remove "Heroku" /usr/lib/heroku &
-        fi
-
-        if [[ ${{ inputs.llvm }} == 'true' ]]; then
-          remove "LLVM" \
-            /usr/lib/llvm* \
-            /usr/lib/*-linux-gnu/libLLVM* \
-            /usr/lib/*-linux-gnu/libclang* \
-            /usr/lib/*-linux-gnu/liblldb* &
-        fi
-
-        if [[ ${{ inputs.sharemisc }} == 'true' ]]; then
-          remove "/usr/share/{man,doc,icons}" \
-            /usr/share/{man,doc,icons} \
-            /usr/local/share/{man,doc,icons} &
+        if [[ ${{ inputs.rust }} == 'true' ]]; then
+          remove "Rust runtime" \
+            /home/{runner,runneradmin}/{.cargo,.rustup} \
+            /etc/skel/{.cargo,.rustup} &
         fi
 
         if [[ ${{ inputs.snap }} == 'true' ]]; then
@@ -333,12 +341,16 @@ runs:
           remove "Swift runtime" /usr/share/swift &
         fi
 
-        if [[ ${{ inputs.ruby }} == 'true' ]]; then
-          remove "Rust runtime" /var/lib/gems/ /home/linuxbrew/.linuxbrew/ &
+        if [[ ${{ inputs.tool-cache }} == 'true' ]]; then
+          remove "Tool cache" "$AGENT_TOOLSDIRECTORY"
         fi
 
-        if [[ ${{ inputs.rust }} == 'true' ]]; then
-          remove "Rust runtime" /home/{runner,runneradmin}/{.cargo,.rustup} /etc/skel/.rustup &
+        if [[ ${{ inputs.usrmisc }} == 'true' ]]; then
+          remove "/usr/src and /usr/{,local}/share/{man,doc,icons}" \
+            /usr/src \
+            /usr/share/{man,doc,icons} \
+            /usr/local/{man,doc,icons} \
+            /usr/local/share/{man,doc,icons} &
         fi
 
         if [[ ${{ inputs.usrlocal }} == 'true' ]]; then
@@ -351,10 +363,6 @@ runs:
 
         if [[ ${{ inputs.varcache }} == 'true' ]]; then
           remove "/var/cache" /var/cache &
-        fi
-
-        if [[ ${{ inputs.tool-cache }} == 'true' ]]; then
-          remove "Tool cache" "$AGENT_TOOLSDIRECTORY"
         fi
 
         if [[ ${{ inputs.docker-images }} == 'true' ]]; then
