@@ -5,7 +5,19 @@ on:
 
 jobs:
   free-disk-space:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    steps:
+      # If there is a problem with this GitHub Actions, this step will fail
+      - name: Checkout this action
+        uses: actions/checkout@v4
+        with:
+          path: ./.github/actions/this
+      - name: Run this action
+        uses: ./.github/actions/this
+        with:
+          debug: true
+  free-disk-space-ubuntu-24-04:
+    runs-on: ubuntu-24.04
     steps:
       # If there is a problem with this GitHub Actions, this step will fail
       - name: Checkout this action
