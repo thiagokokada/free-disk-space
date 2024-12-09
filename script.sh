@@ -9,7 +9,7 @@ printSeparationLine() {
 	num=${2:-80}
 	counter=1
 	output=""
-	while [ $counter -le $num ]
+	while [ $counter -le "$num" ]
 	do
 		output="${output}${str}"
 		counter=$((counter+1))
@@ -20,11 +20,11 @@ printSeparationLine() {
 # macro to compute available space
 # REF: https://unix.stackexchange.com/a/42049/60849
 # REF: https://stackoverflow.com/a/450821/408734
-getAvailableSpace() { echo $(df -a $1 | awk 'NR > 1 {avail+=$4} END {print avail}'); }
+getAvailableSpace() { df -a | awk 'NR > 1 {avail+=$4} END {print avail}'; }
 
 # macro to make Kb human readable (assume the input is Kb)
 # REF: https://unix.stackexchange.com/a/44087/60849
-formatByteCount() { echo $(numfmt --to=iec-i --suffix=B --padding=7 $1'000'); }
+formatByteCount() { numfmt --to=iec-i --suffix=B --padding=7 "$1"'000'; }
 
 # macro to output saved space
 printSavedSpace() {
@@ -33,10 +33,10 @@ printSavedSpace() {
 
 	echo ""
 	printSeparationLine '*' 80
-	if [ ! -z "${title}" ]; then
-		echo "=> ${title}: Saved $(formatByteCount $saved)"
+	if [ -n "${title}" ]; then
+		echo "=> ${title}: Saved $(formatByteCount "$saved")"
 	else
-		echo "=> Saved $(formatByteCount $saved)"
+		echo "=> Saved $(formatByteCount "$saved")"
 	fi
 	printSeparationLine '*' 80
 	echo ""
@@ -74,6 +74,7 @@ printDH() {
 remove() {
 	BEFORE=$(getAvailableSpace)
 
+	# shellcheck disable=SC2068
 	sudo rm -rf ${@:2} || true
 
 	AFTER=$(getAvailableSpace)
@@ -262,6 +263,7 @@ if [[ "$REMOVE_VARCACHE" == 'true' ]]; then
 fi
 
 # Wait until all background jobs finishes
+# shellcheck disable=SC2046
 wait $(jobs -rp)
 
 # Output saved space statistic
