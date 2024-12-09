@@ -21,6 +21,8 @@ printSeparationLine() {
 # REF: https://unix.stackexchange.com/a/42049/60849
 # REF: https://stackoverflow.com/a/450821/408734
 getAvailableSpace() { df -a | awk 'NR > 1 {avail+=$4} END {print avail}'; }
+AVAILABLE_INITIAL=$(getAvailableSpace)
+readonly AVAILABLE_INITIAL
 
 # macro to make Kb human readable (assume the input is Kb)
 # REF: https://unix.stackexchange.com/a/44087/60849
@@ -28,15 +30,17 @@ formatByteCount() { numfmt --to=iec-i --suffix=B --padding=7 "$1"'000'; }
 
 # macro to output saved space
 printSavedSpace() {
-	saved=${1}
-	title=${2:-}
+	title=${1:-}
+
+	AVAILABLE_NOW=$(getAvailableSpace)
+	SAVED=$((AVAILABLE_NOW-AVAILABLE_INITIAL))
 
 	echo ""
 	printSeparationLine '*' 80
 	if [ -n "${title}" ]; then
-		echo "=> ${title}: Saved $(formatByteCount "$saved")"
+		echo "=> ${title}: Saved $(formatByteCount "$SAVED")"
 	else
-		echo "=> Saved $(formatByteCount "$saved")"
+		echo "=> Saved $(formatByteCount "$SAVED")"
 	fi
 	printSeparationLine '*' 80
 	echo ""
@@ -72,14 +76,9 @@ printDH() {
 }
 
 remove() {
-	BEFORE=$(getAvailableSpace)
-
 	# shellcheck disable=SC2068
 	sudo rm -rf ${@:2} || true
-
-	AFTER=$(getAvailableSpace)
-	SAVED=$((AFTER-BEFORE))
-	printSavedSpace $SAVED "$1"
+	printSavedSpace "$1"
 }
 
 
@@ -88,8 +87,6 @@ remove() {
 # ======
 
 # Display initial disk space stats
-
-AVAILABLE_INITIAL=$(getAvailableSpace)
 
 printDH "BEFORE CLEAN-UP:"
 echo ""
@@ -129,13 +126,8 @@ if [[ "$REMOVE_GOOGLE_CLOUD_SDK" == 'true' ]]; then
 fi
 
 if [[ "$REMOVE_DOCKER_IMAGES" == 'true' ]]; then {
-	BEFORE=$(getAvailableSpace)
-
 	sudo docker image prune --all --force &>/dev/null || true
-
-	AFTER=$(getAvailableSpace)
-	SAVED=$((AFTER-BEFORE))
-	printSavedSpace $SAVED "Docker images"
+	printSavedSpace "Docker images"
 }& fi
 
 
@@ -233,11 +225,6 @@ if [[ "$REMOVE_SWIFT" == 'true' ]]; then
 fi
 
 
-if [[ "$REMOVE_SWAP_STORAGE" == 'true' ]]; then {
-	sudo swapoff -a || true
-	remove "Swap storage" /mnt/swapfile
-}& fi
-
 if [[ "$REMOVE_TOOL_CACHE" == 'true' ]]; then
 	remove "Tool cache" "$AGENT_TOOLSDIRECTORY"
 fi
@@ -267,11 +254,8 @@ fi
 wait $(jobs -rp)
 
 # Output saved space statistic
-
-AVAILABLE_END=$(getAvailableSpace)
-
 echo ""
 printDH "AFTER CLEAN-UP:"
 echo ""
 
-printSavedSpace $((AVAILABLE_END - AVAILABLE_INITIAL))
+printSavedSpace

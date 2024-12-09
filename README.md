@@ -12,19 +12,15 @@ See the table below for available free space in the runner before and after the
 action with commit
 [d6963712](https://github.com/thiagokokada/free-disk-space/commit/d6963712fc4596d95a7f83718242c072337a5368).
 
-| runner                             | before | after | diff | swap |
-|------------------------------------|--------|-------|------|------|
-| ubuntu-22.04                       | 22G    | 66G   | 44G  | 4G   |
-| ubuntu-22.04 (including optionals) | 22G    | 69G   | 47G  | 0    |
-| ubuntu-24.04                       | 29G    | 66G   | 37G  | 4G   |
+| runner                             | before | after | diff |
+|------------------------------------|--------|-------|------|
+| ubuntu-22.04                       | 22G    | 66G   | 44G  |
+| ubuntu-22.04 (including optionals) | 22G    | 69G   | 47G  |
+| ubuntu-24.04                       | 29G    | 66G   | 37G  |
 
 This action is also fast, generally taking less than 1 minute with default
 options, since it runs deletion in parallel and doesn't depend in `apt` to
 remove packages.
-
-Swap storage actually seems useless to remove in recent version of GitHub
-runners (maybe because they're not using swap file anymore?), but it still
-provided as an option for backwards compatibility.
 
 ## Example
 
@@ -60,10 +56,6 @@ jobs:
         usrlocal: true
         opt: true
         varcache: true
-        # technically frees up to 4 GiB, but see note above about it being
-        # useless, and can also cause Out-of-Memory errors in bigger builds,
-        # so disabled by default
-        swap-storage: true
         # this will run `du -h /* 2>/dev/null | sort -hr | head -n <N>` to show
         # the top N directories by size, it is mostly used by development/debug
         # and should not be used generally since it takes a while to calculate

@@ -123,10 +123,6 @@ inputs:
     description: "Remove /var/cache"
     required: false
     default: "false"
-  swap-storage:
-    description: "Remove swap storage"
-    required: false
-    default: "false"
   debug:
     description: "Debug options, do not enable unless for testing purposes"
     required: false
@@ -165,6 +161,5 @@ runs:
         REMOVE_USRLOCAL: ${{ inputs.usrlocal }}
         REMOVE_OPT: ${{ inputs.opt }}
         REMOVE_VARCACHE: ${{ inputs.varcache }}
-        REMOVE_SWAP_STORAGE: ${{ inputs.swap-storage }}
         DEBUG: ${{ inputs.DEBUG }}
       run: ${{ github.action_path }}/script.sh

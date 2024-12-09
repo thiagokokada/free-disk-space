@@ -43,5 +43,4 @@ jobs:
           usrlocal: true
           opt: true
           varcache: true
-          swap-storage: true
           debug: true
