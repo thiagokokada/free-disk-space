@@ -233,11 +233,6 @@ if [[ "$REMOVE_SWIFT" == 'true' ]]; then
 fi
 
 
-if [[ "$REMOVE_SWAP_STORAGE" == 'true' ]]; then {
-	sudo swapoff -a || true
-	remove "Swap storage" /mnt/swapfile
-}& fi
-
 if [[ "$REMOVE_TOOL_CACHE" == 'true' ]]; then
 	remove "Tool cache" "$AGENT_TOOLSDIRECTORY"
 fi
