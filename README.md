@@ -56,6 +56,7 @@ jobs:
         # possible dangerous options since they delete whole directories that
         # are generally for third-party software or cache like /usr/local,
         # /opt, /var/cache, only use them if you know what you're doing
+        usrmisc: true
         usrlocal: true
         opt: true
         varcache: true

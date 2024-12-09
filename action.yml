@@ -105,12 +105,12 @@ inputs:
     description: "Remove image tool cache"
     required: false
     default: "true"
+
+  # Disabled by default options
   usrmisc:
     description: "Remove /usr/{,local}/share/{man,doc,icons}"
     required: false
-    default: "true"
-
-  # Disabled by default options
+    default: "false"
   usrlocal:
     description: "Remove /usr/local"
     required: false
