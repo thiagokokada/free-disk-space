@@ -10,13 +10,13 @@ may be useful in other contexts too.
 
 See the table below for available free space in the runner before and after the
 action with commit
-[49208783](https://github.com/thiagokokada/free-disk-space/commit/49208783f385d8cf842671a14c3c2afbc606da31).
+[d6963712](https://github.com/thiagokokada/free-disk-space/commit/d6963712fc4596d95a7f83718242c072337a5368).
 
 | runner                             | before | after | diff | swap |
 |------------------------------------|--------|-------|------|------|
-| ubuntu-22.04                       | 22G    | 67G   | 45G  | 4G   |
+| ubuntu-22.04                       | 22G    | 66G   | 44G  | 4G   |
 | ubuntu-22.04 (including optionals) | 22G    | 69G   | 47G  | 0    |
-| ubuntu-24.04                       | 29G    | 67G   | 38G  | 4G   |
+| ubuntu-24.04                       | 29G    | 66G   | 37G  | 4G   |
 
 This action is also fast, generally taking less than 1 minute with default
 options, since it runs deletion in parallel and doesn't depend in `apt` to
@@ -56,6 +56,7 @@ jobs:
         # possible dangerous options since they delete whole directories that
         # are generally for third-party software or cache like /usr/local,
         # /opt, /var/cache, only use them if you know what you're doing
+        usrmisc: true
         usrlocal: true
         opt: true
         varcache: true
