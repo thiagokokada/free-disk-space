@@ -162,4 +162,11 @@ runs:
         REMOVE_OPT: ${{ inputs.opt }}
         REMOVE_VARCACHE: ${{ inputs.varcache }}
         DEBUG: ${{ inputs.DEBUG }}
-      run: ${{ github.action_path }}/script.sh
+      run: ${{ github.action_path }}/run.sh
+    - shell: bash
+      run: |
+        echo "ACTION_PATH=${{ github.action_path }}" >> "$GITHUB_STATE"
+
+post:
+  - shell: bash
+    run: "$ACTION_PATH/post.sh"
