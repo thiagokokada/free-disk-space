@@ -28,8 +28,8 @@ jobs:
         uses: ./.github/actions/this
         with:
           debug: true
-  free-disk-space-incl-optionals:
-    runs-on: ubuntu-latest
+  free-disk-space-ubuntu-24-04-incl-optionals:
+    runs-on: ubuntu-24.04
     steps:
       # If there is a problem with this GitHub Actions, this step will fail
       - name: Checkout this action
