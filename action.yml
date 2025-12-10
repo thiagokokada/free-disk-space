@@ -7,6 +7,10 @@ branding:
   color: "green"
 
 inputs:
+  apt:
+    description: "Remote apt{-get} files"
+    required: false
+    default: "true"
   android:
     description: "Remove Android runtime"
     required: false
@@ -133,6 +137,7 @@ runs:
   steps:
     - shell: bash
       env:
+        REMOVE_APT: ${{ inputs.apt }}
         REMOVE_ANDROID: ${{ inputs.android }}
         REMOVE_AZ: ${{ inputs.az }}
         REMOVE_AWS_CLI: ${{ inputs.aws_cli }}

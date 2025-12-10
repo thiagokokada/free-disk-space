@@ -90,6 +90,10 @@ echo ""
 
 # Clean-up
 
+if [[ "$REMOVE_APT" == 'true' ]]; then
+	remove "Apt" /var/lib/apt &
+fi
+
 if [[ "$REMOVE_ANDROID" == 'true' ]]; then
 	remove "Android library" /usr/local/lib/android &
 fi
@@ -178,6 +182,9 @@ if [[ "$REMOVE_MYSQL" == 'true' ]]; then {
 }& fi
 
 if [[ "$REMOVE_NODE" == 'true' ]]; then
+	# Can't delete the directory below since it is used to communicate the
+	# state of the runner
+	# /home/runner/actions-runner/cached/externals/node*
 	remove "Node runtime" \
 		/usr/local/n \
 		/usr/local/lib/node_modules \
@@ -185,7 +192,11 @@ if [[ "$REMOVE_NODE" == 'true' ]]; then
 fi
 
 if [[ "$REMOVE_PYTHON" == 'true' ]]; then
-	remove "Python runtime" /opt/pipx /usr/share/miniconda &
+	remove "Python runtime" \
+		/opt/pipx \
+		/usr/lib/python* \
+		/usr/share/python* \
+		/usr/share/miniconda &
 fi
 
 if [[ "$REMOVE_POSTGRESQL" == 'true' ]]; then {
