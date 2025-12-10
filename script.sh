@@ -3,18 +3,10 @@
 # ======
 
 # macro to print a line of equals
-# (silly but works)
 printSeparationLine() {
-	str=${1:=}
-	num=${2:-80}
-	counter=1
-	output=""
-	while [ $counter -le "$num" ]
-	do
-		output="${output}${str}"
-		counter=$((counter+1))
-	done
-	echo "${output}"
+    local str="${1:=}"
+    local num="${2:-80}"
+    printf "%${num}s" "" | tr ' ' "$str"
 }
 
 # macro to compute available space
@@ -30,27 +22,33 @@ formatByteCount() { numfmt --to=iec-i --suffix=B --padding=7 "$1"'000'; }
 
 # macro to output saved space
 printSavedSpace() {
-	title=${1:-}
+    local title="${1:-}"
+    local available_now
+    available_now=$(getAvailableSpace)
+    local saved=$((available_now - AVAILABLE_INITIAL))
 
-	AVAILABLE_NOW=$(getAvailableSpace)
-	SAVED=$((AVAILABLE_NOW-AVAILABLE_INITIAL))
+    local sep
+    sep=$(printSeparationLine '*' 80)
 
-	echo ""
-	printSeparationLine '*' 80
-	if [ -n "${title}" ]; then
-		echo "=> ${title}: Saved $(formatByteCount "$SAVED")"
-	else
-		echo "=> Saved $(formatByteCount "$SAVED")"
-	fi
-	printSeparationLine '*' 80
-	echo ""
+    local out=""
+    out+="$sep\n"
+    if [[ -n "$title" ]]; then
+        out+="=> ${title}: Saved $(formatByteCount "$saved")\n"
+    else
+        out+="=> Saved $(formatByteCount "$saved")\n"
+    fi
+    out+="$sep\n"
+
+    # print output atomically
+    printf '%b' "$out"
 }
 
 # macro to print output of dh with caption
 printDH() {
-	caption=${1:-}
+	local caption=${1:-}
 
 	printSeparationLine '=' 80
+	echo ''
 	echo "${caption}"
 	echo ''
 
