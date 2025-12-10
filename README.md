@@ -10,13 +10,13 @@ may be useful in other contexts too.
 
 See the table below for available free space in the runner before and after the
 action with commit
-[d6963712](https://github.com/thiagokokada/free-disk-space/commit/d6963712fc4596d95a7f83718242c072337a5368).
+[910ec008](https://github.com/thiagokokada/free-disk-space/commit/910ec0081f5136787db2745bacce9a8cbb2f0b01).
 
 | runner                             | before | after | diff |
 |------------------------------------|--------|-------|------|
-| ubuntu-22.04                       | 22G    | 66G   | 44G  |
-| ubuntu-22.04 (including optionals) | 22G    | 69G   | 47G  |
-| ubuntu-24.04                       | 29G    | 66G   | 37G  |
+| ubuntu-22.04                       | 16G    | 65G   | 49G  |
+| ubuntu-24.04                       | 18G    | 65G   | 47G  |
+| ubuntu-24.04 (including optionals) | 18G    | 68G   | 50G  |
 
 This action is also fast, generally taking less than 1 minute with default
 options, since it runs deletion in parallel and doesn't depend in `apt` to
