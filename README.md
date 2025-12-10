@@ -25,14 +25,14 @@ remove packages.
 ## Example
 
 It is recommended to look at the [source
-code](https://github.com/thiagokokada/free-disk-space/blob/main/action.yml) for
+code](https://github.com/thiagokokada/free-disk-space/blob/main/script.sh) for
 the action and look at all available inputs and see which ones may affect you.
 By default it will pretty much remove support for any of the pre-installed
-programming languages, but it will try to keep support for common Linux tools
-and `apt`, so you can still install more things if needed.
+programming languages, but it will try to keep support for common Linux tools.
+
 I also recommend you to fork and adapt this accordingly to your needs. Again,
-this comes with **no support**. If you want to use this repository directly
-I recommend you to pin a specific commit.
+this comes with **no support**. If you want to use this repository directly I
+recommend you to pin a specific commit.
 
 ```yaml
 name: Free Disk Space (Ubuntu)
