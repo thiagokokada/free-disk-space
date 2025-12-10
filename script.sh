@@ -63,11 +63,10 @@ printDH() {
 	# this is slow, this is why it is not enabled by default
 	if [[ "$DEBUG" == 'true' ]]; then
 		echo '$ du -h /* 2>/dev/null | sort -hr | head -n 100'
-		# https://unix.stackexchange.com/a/355164
-		sudo perl -e \
-			'$SIG{PIPE}="DEFAULT"; exec "@ARGV"' \
-			'du -h /* 2>/dev/null | sort -hr | head -n 100' || true
-
+		# Doing this with a temporary file, to avoid the following error
+		# sort: write failed | broken pipe
+		du -h /* 2>/dev/null | sort -hr > /tmp/du_sorted.tmp
+		head -n 100 /tmp/du_sorted.tmp
 		echo ''
 	fi
 	printSeparationLine '=' 80
