@@ -31,15 +31,13 @@ printSavedSpace() {
     sep=$(printSeparationLine '*' 80)
 
     local out=""
-    out+="\n"
     out+="$sep\n"
-    if [ -n "$title" ]; then
+    if [[ -n "$title" ]]; then
         out+="=> ${title}: Saved $(formatByteCount "$saved")\n"
     else
         out+="=> Saved $(formatByteCount "$saved")\n"
     fi
     out+="$sep\n"
-    out+="\n"
 
     # print output atomically
     printf '%b' "$out"
@@ -47,9 +45,10 @@ printSavedSpace() {
 
 # macro to print output of dh with caption
 printDH() {
-	caption=${1:-}
+	local caption=${1:-}
 
 	printSeparationLine '=' 80
+	echo ''
 	echo "${caption}"
 	echo ''
 
