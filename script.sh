@@ -249,10 +249,6 @@ if [[ "$REMOVE_USRLOCAL" == 'true' ]]; then
 	remove "/usr/local" /usr/local &
 fi
 
-if [[ "$REMOVE_OPT" == 'true' ]]; then
-	remove "/opt" /opt &
-fi
-
 if [[ "$REMOVE_VARCACHE" == 'true' ]]; then
 	remove "/var/cache" /var/cache &
 fi
