@@ -5,35 +5,23 @@ on:
 
 jobs:
   free-disk-space:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       # If there is a problem with this GitHub Actions, this step will fail
       - name: Checkout this action
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ./.github/actions/this
       - name: Run this action
         uses: ./.github/actions/this
         with:
           debug: true
-  free-disk-space-ubuntu-24-04:
-    runs-on: ubuntu-24.04
+  free-disk-space-incl-optionals:
+    runs-on: ubuntu-26.04
     steps:
       # If there is a problem with this GitHub Actions, this step will fail
       - name: Checkout this action
-        uses: actions/checkout@v4
-        with:
-          path: ./.github/actions/this
-      - name: Run this action
-        uses: ./.github/actions/this
-        with:
-          debug: true
-  free-disk-space-ubuntu-24-04-incl-optionals:
-    runs-on: ubuntu-24.04
-    steps:
-      # If there is a problem with this GitHub Actions, this step will fail
-      - name: Checkout this action
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ./.github/actions/this
       - name: Run this action
@@ -43,4 +31,16 @@ jobs:
           usrlocal: true
           opt: true
           varcache: true
+          debug: true
+  free-disk-space-ubuntu-24-04:
+    runs-on: ubuntu-24.04
+    steps:
+      # If there is a problem with this GitHub Actions, this step will fail
+      - name: Checkout this action
+        uses: actions/checkout@v6
+        with:
+          path: ./.github/actions/this
+      - name: Run this action
+        uses: ./.github/actions/this
+        with:
           debug: true

@@ -120,7 +120,7 @@ inputs:
     required: false
     default: "false"
   opt:
-    description: "Remove /opt"
+    description: "Remove /opt (no-op, deprecated)"
     required: false
     default: "false"
   varcache:
